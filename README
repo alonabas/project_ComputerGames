@@ -1,0 +1,110 @@
+alonaba	324350651
+
+List of submitted files:
+ex4.cpp
+Background.cpp	Background.h	- background of flags scene	
+bimage.cpp	bimage.h	- read BMP
+Camera.cpp	Camera.h	- camera control
+FinalScene.cpp	FinalScene.h	- scene for winner
+Firework.cpp	Firework.h	- Particales of basic fireworks
+Flag.cpp	Flag.h		- Flag 	
+Flame.cpp	Flame.h		- flame for mouse cursor
+Frame.cpp	Frame.h		- frame to display found objects
+Globals.cpp	Globals.h	- global data
+Instructions.cpp	Instructions.h	- subscreen of instructions
+MainModel.cpp	MainModel.h	- Main scene
+MeshObject.cpp	MeshObject.h	- Mesh object loader 
+Mirror.cpp	Mirror.h	- Mirror object
+ModelFlags.cpp	ModelFlags.h	- Scene of flags
+PPBObject.cpp	PPBObject.h	- Postprocessing
+RefractingObject.cpp	RefractingObject.h	- Bettle code
+ShaderIO.cpp	ShaderIO.h	- Shaders reader
+Sky.cpp		Sky.h		- Sky renderer
+SkyBox.cpp	SkyBox.h	- Sky box
+Sound.cpp	Sound.h		- Sound controller
+Statue.cpp	Statue.cpp	- Statue renderer
+SubScene.cpp	SubScene.h	- Subscene pointer
+Table.cpp	Table.h		- Tabler render
+Text.cpp	Text.h		- Text rendere
+TGALoader.cpp	TGALoader.h	- Load TGA textures
+Torch.cpp	Torch.h		- Torch implementation
+BoundingSphere.h
+Defs.h
+Model.h
+Object.h
+stb_image.h
+
+Explanaitions:
+Main Scene:
+1. Skybox
+	I’ve used depth map and normal map to create effect of 3d World,  such that moving light 	(torch) over the screen is looking natural, i.e. close objects became lighter and there 		is reflection and diffusion that calculated based on normal’s map (I hope I succeed to 		create 3d illusion J)
+
+	Based on skymap I’ve created the animation of sky, this animation based on
+	http://	glslsandbox.com/e#19869.0
+
+2. 3D objects:
+	1. Mirror – construction of two objects: the stand and the mirror itself, reflection is 	implemented in GLSL, mirrors contains animated ghost inside.
+
+	2. Gold lion, phong model with KS, KA, KD parameters of Gold
+
+	3.Glass Beetle, implementation of refraction and reflection is in GLSL based on Nvidia 		GEMS
+
+3. 2D Object
+	texture of flags scene as an entrance to that scene, when you click with the mouse this 	object you enter to sub scene of flags.
+
+In main scene there is full rotation.
+The test if player clicked the correct object is implements by ray casting method (each object has a bounding sphere), I’ve assumed that the torch located at the camera’s target plane and calculate it’s 3d coordinates, to check if object is clicked.
+
+
+Flags scene:
+
+1. Background image
+	Appears in the same as way SkyBox of main scene (with animated sky, depth map and normal 	map that create illusion of 3d world – I hope it creates such illusion)
+
+2. 7 flags with chromatic stands
+	I've use physical cloth simulation, it is implemented in C++ code with global wind such 	that each flag is moving in different way, player should find 4 of the flags
+
+3. 3D table:
+	All are flags located on the table, texture of the table is procedure generated in GLSL
+
+Camera in that scene can move by x axis only, to exit to main scene press ‘b’. If all flags are found the screen is closed by itself and you’ll back to main screen
+
+Torch:
+	Is 3D torch  + fire effect, this torch is used as mouse cursor and is also global light 	source.
+
+	I’ve tried to make full fire simulation, but I failed to achieve real color of fire 		(without textures) and	also it was too slow with thousands of particles, so I’ve 		created the fire effect based on glslsandbox.com/e#17719.1.
+
+However when I’ve tested it, in some PCs it is running to slow because of fire effect, so you can disable it by pressing ‘m’ or by accessing menu and choosing switch mode, however the mouse cursor is still the light source , so pressing m will just display torch without fire.
+
+SubScreen:
+	Screen that contains the text:
+	- list of object that player should find 
+	- some helpful information,
+I've implemented also the menu (that for some reason doesn’t work on unix in Lab), the right button of the mouse displays menu with 2 options: switch mode and exit game). 
+Subscreens has two modes based on the current scene in the game, if item written using gray ink it means the item can't be found in current scene, but if is written using white ink - the object is in curreny scene and you can find it.
+
+Sound:
+	during the game there is a sound of wind
+
+Win scene:
+When player finds all of the objects, he sees the Win screen that constains:
+1. gold medal
+	simple 2d square with bump mapping that create 3d effect, mouse as light source allows 		to see that in details.
+
+2. Fireworks
+	it is not real firework, not even close... just particles that move according to physics 		laws.
+	Implemented using particle system and basic glow with postprocessing.
+
+	In win screen the torch isn’t visible however the mouse is still the global light source.
+3. Sound
+	there is repeating win sound
+
+
+Credit: Skybox and depth map were created using Lumion Software. http://glslsandbox.com/ is very helpful to find implementation of some nice effect.
+
+Rules:
+You should find the objects in the scene. List of objects you should find is on the left panel. In main scene you can find only the objects which written with white ink at left panel. In main scene you can rotate the camera and use torch to identify and hit the requested object. In second scene that you also should find the entrance to, you should find the flags of countries written in left panel. Here you can move left and right and also use torch to find the correct flags. After you find all items, you've get the gold medal!!! Congratulations.
+
+Note:
+To run the application first write in shell: source setpath.sh, whithout this the mesh can't load
+
